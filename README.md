@@ -1,82 +1,85 @@
-## Site Cloner CLI
 
+# site-cloner-cli
 
+A simple Node.js CLI that clones a website to your local machine and rewrites paths so the site works offline for **static content** (HTML/CSS/JS/images/fonts). It crawls internal links up to a limit and downloads assets (including URLs referenced inside CSS).
 
-🚀 Site Cloner CLI is a command-line tool that lets you clone any website locally (HTML, CSS, JS, assets) and make it functional offline.Great for learning, backups, or experimenting with website structures.
+> ⚠️ Heavily dynamic sites (e.g., Google, apps behind APIs/CSP) may not fully work offline. For the assignment, try landing pages or content sites (e.g., `piyushgarg.dev`, `hitesh.ai`, VS Code landing page).
 
-✨ Features
+## ✨ Features
 
-🔗 Clone any given website locally
+- Crawl internal links up to `--max-depth` and `--max-pages`
+- Download and rewrite **images**, **stylesheets**, **scripts**, **icons**, **video/audio sources**
+- Parse CSS and download `url(...)` referenced assets (fonts, background images, etc.)
+- Rewrites internal links (`<a href>`) to local relative paths like `about/index.html`
+- Mirrors external assets under `assets/<host>/...` (configurable)
+- Concurrency for faster downloads
+- Clean, easy-to-run CLI
 
-📂 Saves HTML, CSS, JS, images, fonts
+## 🚀 Quick Start
 
-🔄 Rewrites internal links → so cloned pages work offline
-
-⚡ Concurrency & depth control (faster cloning)
-
-🖥️ CLI-based → no extra UI, just commands
-
-🔍 Optional preview with a lightweight dev server
-
-📦 Installation
-
-## Clone the repo:
-git clone https://github.com/yourusername/site-cloner-cli.git
+```bash
+# 1) Extract or open this folder
 cd site-cloner-cli
-npm install
-🚀 Usage
 
-## Clone a website into a folder:
-node index.js <website-url> --out <output-directory>
-This will:
+# 2) Install dependencies (Node 18+)
+npm i
 
-Fetch all pages (up to depth 2, configurable)
+# 3) Clone a site (example)
+node index.js https://piyushgarg.dev --out dist --max-depth 2 --max-pages 50
 
-Save them to dist/
+# 4) Open dist/index.html in your browser (Incognito works too)
+```
 
-Rewrite relative links so you can open them offline
-## 🔍 Preview cloned site
-npm run preview 
-This starts a local server at:👉 http://localhost:5050
-## Configuration
+Or after linking globally (optional):
+```bash
+npm link
+site-cloner https://hitesh.ai --out dist
+```
 
-Inside index.js you can tweak:
-const config = {
-  maxDepth: 2,            // how many levels deep to crawl
-  maxPages: 50,           // max pages to clone
-  concurrency: 8,         // parallel requests
-  includeSubdomains: false,
-  fetchExternalAssets: true
-}
-🗂️ Project Structure
-site-cloner-cli/
-│── index.js           # Main CLI tool logic
-│── package.json       # NPM config + scripts
-│── scripts/
-│    └── preview.js    # Local preview server
-│── dist/              # Output folder (after cloning)
-└── README.md          # Project docs
-Scripts
-npm run clone     # Run site cloner manually
-npm run preview   # Start local preview server
-npm run clean     # Remove dist folder
-📸 Example
-node index.js https://piyushgarg.dev --out dist
-👉 Opens a fully functional offline clone in dist/.
-🤝 Contributing
-Contributions are welcome! 🎉
+## 🧰 CLI Options
 
-Fork this repo
+```
+Usage: site-cloner [options] <url>
 
-Create a feature branch (git checkout -b feature-xyz)
+Clone a website locally so it works offline (static assets + internal links).
 
-Commit changes (git commit -m "Added xyz feature")
+Arguments:
+  url                           Website URL to clone
 
-Push & open a Pull Request 🚀
-📜 License
+Options:
+  -o, --out <dir>               Output directory (default: "dist")
+  -d, --max-depth <n>           Max crawl depth (0 only the given page) (default: 2)
+  -p, --max-pages <n>           Max number of pages to crawl (default: 50)
+  --concurrency <n>             Concurrent downloads (default: 8)
+  --include-subdomains          Also crawl subdomains of the target host (default: false)
+  --fetch-external-assets       Download external asset URLs (fonts, CDNs, images) (default: true)
+  --no-fetch-external-assets    Disable external asset download
+  --user-agent <ua>             Custom User-Agent string
+  -h, --help                    display help for command
+```
 
-This project is licensed under the MIT License – free to use, modify, and share
-⭐ Support
+## 📹 Demo Video (what to show)
 
-If you find this project useful, don’t forget to star ⭐ the repo on GitHub!
+1. Terminal: run `node index.js https://piyushgarg.dev -o dist`
+2. Show the generated `dist/` structure (pages + assets folders)
+3. Open `dist/index.html` and navigate links offline
+4. Upload recording to YouTube as **Unlisted/Public**
+5. Verify the link works in an **Incognito** window
 
+## 📝 Notes / Limitations
+
+- Dynamic data fetched via XHR/fetch won't be mirrored unless those endpoints are also cloned (out of scope).
+- Sites with strict **CSP**, **service workers**, or heavy client-side rendering may break offline.
+- External links are kept online by default; set `--fetch-external-assets=false` to skip downloading their assets.
+- Respect the site's terms of use. Use this for educational purposes only.
+
+## 🧪 Test Targets
+
+- `https://piyushgarg.dev`
+- `https://hitesh.ai`
+- VS Code landing page
+- (Avoid `google.com` for offline expectations; it's highly dynamic.)
+
+## 🤝 License
+
+MIT
